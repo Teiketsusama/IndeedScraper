@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en=GB">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+          integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Indeed Developer Job Scraper</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.2.0/chroma.min.js"
@@ -9,130 +14,165 @@
     <style>
         canvas {
             display: block;
-            max-width: 800px;
             margin: 20px auto;
-        }
-        input {
-            width: 200px;
-            padding: 5px 8px;
-            margin: 4px 0;
-            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-    <h1>Indeed Developer Job Scraper</h1>
+    <div class="container p-3">
+        <header>
+            <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+                <a href="/" class="d-flex align-items-center link-body-emphasis text-decoration-none">
+                    <span class="fs-4">Indeed Developer Job Scraper</span>
+                </a>
+            </div>
+        </header>
 
-    <form action="/search"  method="POST">
-        <label for="job_title">Search latest jobs:</label><br>
-        <br>
-        <input type="text" id="job_title" name="job_title" placeholder="Job title (Required)" required><br>
-        <input type="text" id="job_location" name="job_location" value="Sydney" placeholder="Location"><br>
-        <input type="text" id="num_pages" name="num_pages" value="1" placeholder="Number of pages to scrape"><br>
-        <input type="submit" value="Search">
-    </form>
+        <form action="/search" method="POST" class="row g-3">
+            <div class="col-12 col-md-6 col-lg-4">
+                <label for="job_title" class="form-label">Job title</label>
+                <input type="text" id="job_title" name="job_title" placeholder="Job title (Required)" class="form-control" required>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label for="job_location" class="form-label">Location</label>
+                <input type="text" id="job_location" name="job_location" value="Sydney" placeholder="Location" class="form-control">
+            </div>
+            <div class="col-12 col-md-6 col-lg-2">
+                <label for="num_pages" class="form-label">Pages to scrape</label>
+                <input type="text" id="num_pages" name="num_pages" value="1" placeholder="Number of pages to scrape" class="form-control">
+            </div>
+            <div class="col-12 col-md-6 col-lg-2">
+                <button type="submit" class="btn btn-primary" style="margin-top: 32px; width: 100%;">Search</button>
+            </div>
+        </form>
 
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
+        <div class="row align-items-center" style="margin-top: 2rem">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success" role="alert">
+                        {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
 
-    {% if loading %}
-        <p>Fetching the data, please wait...</p>
-    {% else %}
-        <h2>Job Skill Count</h2>
-        <p>Latest data as of {{ latest_date }}</p>
-        <p>Number of jobs scraped: {{ num_jobs }}</p>
-        <p>Jobs located in:
-        {% for location in locations %}
-            {{ location[0] }}
-        {% endfor %}
-        </p>
+        <div class="row align-items-center border-bottom g-3">
+            <div class="col-12 col-md-3">
+                <p class="h4" style="margin-top: 1rem">Job Skill Count</p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p style="margin-top: 2rem">Latest data as of <b>{{ latest_date }}</b></p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p style="margin-top: 2rem">Number of jobs scraped: <b>{{ num_jobs }}</b></p>
+            </div>
+            <div class="col-12 col-md-3">
+                <p style="margin-top: 2rem">Jobs located in:
+                {% for location in locations %}
+                    <b>{{ location[0] }}</b>
+                {% endfor %}
+                </p>
+            </div>
+        </div>
 
-        <canvas id="programming_languages_chart"></canvas>
-        <canvas id="frameworks_chart"></canvas>
-        <canvas id="databases_chart"></canvas>
+        <div class="row g-3">
+            <div class="col-sm-12 col-lg-6">
+                <div class="chart-container">
+                    <canvas id="programming_languages_chart"></canvas>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                <div class="chart-container">
+                    <canvas id="frameworks_chart"></canvas>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-6">
+                <div class="chart-container">
+                    <canvas id="databases_chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <script>
-        const color1 = ['#006633', '#a1c550', '#d9c500'];
-        const color2 = ['#904c2d', '#f6ab6b', '#ffebc5'];
-        const color3 = ['#008ae5', '#b3ccff', '#cbdbff'];
+    <script>
+    const color1 = ['#006633', '#a1c550', '#d9c500'];
+    const color2 = ['#904c2d', '#f6ab6b', '#ffebc5'];
+    const color3 = ['#008ae5', '#b3ccff', '#cbdbff'];
 
-        var programmingLanguagesChart = new Chart(document.getElementById('programming_languages_chart'), {
-            type: 'horizontalBar',
-            data: {
-                labels: {{ programming_languages.keys()|list|tojson }},
-                datasets: [
-                    {
-                        label: 'Programming Languages',
-                        data: {{ programming_languages.values()|list|tojson }},
-                        backgroundColor: chroma.scale(color1).colors({{ programming_languages|length }}),
-                        borderColor: chroma.scale(['gray', 'white']).colors({{ programming_languages|length }}),
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Programming Languages mentioned in job descriptions'
+    var programmingLanguagesChart = new Chart(document.getElementById('programming_languages_chart'), {
+        type: 'horizontalBar',
+        data: {
+            labels: {{ programming_languages.keys()|list|tojson }},
+            datasets: [
+                {
+                    label: 'Programming Languages',
+                    data: {{ programming_languages.values()|list|tojson }},
+                    backgroundColor: chroma.scale(color1).colors({{ programming_languages|length }}),
+                    borderColor: chroma.scale(['gray', 'white']).colors({{ programming_languages|length }}),
+                    borderWidth: 1
                 }
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Programming Languages mentioned in job descriptions'
             }
-        });
+        }
+    });
 
-        var frameworksChart = new Chart(document.getElementById('frameworks_chart'), {
-            type: 'horizontalBar',
-            data: {
-                labels: {{ frameworks.keys()|list|tojson }},
-                datasets: [
-                    {
-                        label: 'Frameworks',
-                        data: {{ frameworks.values()|list|tojson }},
-                        backgroundColor: chroma.scale(color2).colors({{ frameworks|length }}),
-                        borderColor: chroma.scale(['gray', 'white']).colors({{ frameworks|length }}),
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Frameworks mentioned in job descriptions'
+    var frameworksChart = new Chart(document.getElementById('frameworks_chart'), {
+        type: 'horizontalBar',
+        data: {
+            labels: {{ frameworks.keys()|list|tojson }},
+            datasets: [
+                {
+                    label: 'Frameworks',
+                    data: {{ frameworks.values()|list|tojson }},
+                    backgroundColor: chroma.scale(color2).colors({{ frameworks|length }}),
+                    borderColor: chroma.scale(['gray', 'white']).colors({{ frameworks|length }}),
+                    borderWidth: 1
                 }
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Frameworks mentioned in job descriptions'
             }
-        });
+        }
+    });
 
-        var databasesChart = new Chart(document.getElementById('databases_chart'), {
-            type: 'horizontalBar',
-            data: {
-                labels: {{ databases.keys()|list|tojson }},
-                datasets: [
-                    {
-                        label: 'Databases',
-                        data: {{ databases.values()|list|tojson }},
-                        backgroundColor: chroma.scale(color3).colors({{ databases|length }}),
-                        borderColor: chroma.scale(['gray', 'white']).colors({{ databases|length }}),
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Databases mentioned in job descriptions'
+    var databasesChart = new Chart(document.getElementById('databases_chart'), {
+        type: 'horizontalBar',
+        data: {
+            labels: {{ databases.keys()|list|tojson }},
+            datasets: [
+                {
+                    label: 'Databases',
+                    data: {{ databases.values()|list|tojson }},
+                    backgroundColor: chroma.scale(color3).colors({{ databases|length }}),
+                    borderColor: chroma.scale(['gray', 'white']).colors({{ databases|length }}),
+                    borderWidth: 1
                 }
+            ]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Databases mentioned in job descriptions'
             }
-        });
-            
-        </script>
-    {% endif %}
+        }
+    });
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
+            integrity="sha512-VK2zcvntEufaimc+efOYi622VN5ZacdnufnmX7zIhCPmjhKnOi9ZDMtg1/ug5l183f19gG1/cBstPO4D8N/Img=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>
