@@ -4,6 +4,8 @@ from datetime import datetime
 from database import init_db, db_session
 from models import IndeedJob
 from scrapercofig import driver
+from time import sleep
+from random import random
 
 init_db()
 
@@ -56,6 +58,7 @@ def search_jobs(job_title: str, location='Sydney', page_num=1):
                                 location=location)
                 db_session.add(job)
                 db_session.commit()
+                sleep(random() * 2 + 1)
 
 
 def sum_programming_skills(programming_skills: list) -> dict:
