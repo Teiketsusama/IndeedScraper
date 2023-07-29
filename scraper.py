@@ -86,7 +86,7 @@ databases = ['mysql', 'postgresql', 'mongodb', 'redis', 'rdbms', 'oracle', 'sql 
 
 
 def main():
-    search_jobs('software engineer', 'Sydney', 2)
+    search_jobs('software engineer')
     programming_languages_dict = sum_programming_skills(programming_languages)
     frameworks_dict = sum_programming_skills(frameworks)
     databases_dict = sum_programming_skills(databases)
