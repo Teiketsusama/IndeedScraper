@@ -4,7 +4,9 @@ A Simple Job Scraper Web App using Flask
 
 ## Description
 
-Search latest (software engineer) jobs from [au.indeed.com](https://au.indeed.com/)
+Search latest (software engineer) jobs from [au.indeed.com](https://au.indeed.com/).
+
+Generate the most popular job skill counts.
 
 ## Built with
 
@@ -33,3 +35,5 @@ $ python app.py
 Go to:
 
 Website: http://localhost:5000
+
+![template_img](https://github.com/Teiketsusama/IndeedScraper/blob/master/template.png)
