@@ -24,7 +24,13 @@ Generate the most popular job skill counts.
 ```
 git clone https://github.com/Teiketsusama/IndeedScraper.git
 cd IndeedScraper
-make install
+```
+```
+python3 -m venv venv  # on Windows, use "python -m venv venv" instead
+venv/bin/activate   # on Windows, use "venv\Scripts\activate" instead
+```
+```
+pip install -r requirements.txt
 ```
 
 ### First Run
