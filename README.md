@@ -27,7 +27,7 @@ cd IndeedScraper
 ```
 ```
 python3 -m venv venv  # on Windows, use "python -m venv venv" instead
-venv/bin/activate   # on Windows, use "venv\Scripts\activate" instead
+venv/bin/activate   # on Windows, use "venv\Scripts\activate.bat" instead
 ```
 ```
 pip install -r requirements.txt
@@ -40,6 +40,6 @@ $ python app.py
 ```
 Go to:
 
-Website: http://localhost:5000
+http://localhost:5000
 
 ![template_img](https://github.com/Teiketsusama/IndeedScraper/blob/master/template.png)
